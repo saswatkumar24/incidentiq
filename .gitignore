@@ -1,0 +1,26 @@
+# Virtual Environments
+venv/
+.venv/
+backend/venv/
+env/
+.env
+
+# Dependencies
+node_modules/
+frontend/node_modules/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+
+# Databases & Vector Stores
+*.sqlite3
+chroma_db/
+
+# System files
+.DS_Store
+Thumbs.db
