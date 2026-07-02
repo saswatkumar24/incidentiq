@@ -7,8 +7,14 @@ import PostMortemPanel from './PostMortemPanel';
 import MetricsDashboard from './MetricsDashboard';
 import { Activity, Clock, Zap, History, RefreshCw, Layers } from 'lucide-react';
 
-const API_BASE = "http://localhost:8000";
-const WS_BASE = "ws://localhost:8000";
+const getBackendUrls = () => {
+  const savedApi = localStorage.getItem("VITE_API_URL");
+  const apiBase = savedApi || import.meta.env.VITE_API_URL || "http://localhost:8000";
+  const wsBase = apiBase.replace(/^http/, 'ws');
+  return { apiBase, wsBase };
+};
+
+const { apiBase: API_BASE, wsBase: WS_BASE } = getBackendUrls();
 
 const Dashboard = () => {
   const [scenarios, setScenarios] = useState([]);
@@ -94,6 +100,21 @@ const Dashboard = () => {
       } catch (e) {
         console.error("Failed to reset demo:", e);
       }
+    }
+  };
+
+  // Configure custom backend API URL for presentation machines
+  const handleConfigureBackend = () => {
+    const currentUrl = localStorage.getItem("VITE_API_URL") || "http://localhost:8000";
+    const newUrl = window.prompt("Enter your Backend API URL (e.g. your localtunnel backend link):\nLeave blank to reset to default http://localhost:8000.", currentUrl);
+    if (newUrl !== null) {
+      const trimmed = newUrl.trim();
+      if (trimmed) {
+        localStorage.setItem("VITE_API_URL", trimmed);
+      } else {
+        localStorage.removeItem("VITE_API_URL");
+      }
+      window.location.reload();
     }
   };
 
@@ -274,6 +295,14 @@ const Dashboard = () => {
             title="Reset simulation environment"
           >
             <RefreshCw size={14} />
+          </button>
+
+          <button
+            onClick={handleConfigureBackend}
+            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-100 hover:bg-slate-800 border border-transparent hover:border-slate-700/40 transition-all"
+            title="Configure Backend Connection"
+          >
+            <Layers size={14} />
           </button>
         </div>
       </header>
