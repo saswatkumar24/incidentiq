@@ -38,8 +38,11 @@ SCENARIO_LIST = [
 
 # Background SRE orchestration task runner
 async def run_orchestrator_task(incident_id: str, scenario_name: str, alert_payload: dict):
-    # Allow the React frontend a short window to establish the WebSocket connection
-    await asyncio.sleep(1.5)
+    # Wait for the WebSocket client to establish connection (max 5 seconds)
+    for _ in range(25):
+        if incident_id in manager.active_connections and manager.active_connections[incident_id]:
+            break
+        await asyncio.sleep(0.2)
     
     # Callback function to broadcast events to WS
     async def ws_callback(event: dict):
