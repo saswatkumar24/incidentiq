@@ -1,4 +1,5 @@
 import uuid
+import asyncio
 from datetime import datetime
 from fastapi import APIRouter, Depends, BackgroundTasks, HTTPException
 from pydantic import BaseModel
@@ -37,6 +38,9 @@ SCENARIO_LIST = [
 
 # Background SRE orchestration task runner
 async def run_orchestrator_task(incident_id: str, scenario_name: str, alert_payload: dict):
+    # Allow the React frontend a short window to establish the WebSocket connection
+    await asyncio.sleep(1.5)
+    
     # Callback function to broadcast events to WS
     async def ws_callback(event: dict):
         await manager.broadcast(incident_id, event)
