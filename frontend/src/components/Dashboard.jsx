@@ -196,22 +196,22 @@ const Dashboard = () => {
           let summary = "";
           
           if (agent === "triage_agent") {
-            summary = `Classified as ${res.severity} severity on service '${res.service}'. Blast radius: ${res.blast_radius}. Business impact: ${res.business_impact}. SLA limit: ${res.sla_breach_in_minutes} mins.`;
+            summary = `Classified as ${res?.severity || 'unknown'} severity on service '${res?.service || 'unknown'}'. Blast radius: ${res?.blast_radius || 'unknown'}. Business impact: ${res?.business_impact || 'unknown'}. SLA limit: ${res?.sla_breach_in_minutes || 0} mins.`;
           } else if (agent === "rca_agent") {
-            summary = `Identified root cause (Confidence: ${Math.round(res.confidence * 100)}%): ${res.root_cause}. Evidence elements: ${res.evidence?.length || 0}.`;
+            summary = `Identified root cause (Confidence: ${Math.round((res?.confidence || 0) * 100)}%): ${res?.root_cause || 'unknown'}. Evidence elements: ${res?.evidence?.length || 0}.`;
           } else if (agent === "runbook_agent") {
-            summary = `Located runbook: '${res.runbook_title}' (Relevance: ${Math.round(res.relevance_score * 100)}%). Adapted ${res.adapted_steps?.length || 0} mitigation steps. Estimated resolution: ${res.estimated_resolution_minutes} minutes.`;
+            summary = `Located runbook: '${res?.runbook_title || 'unknown'}' (Relevance: ${Math.round((res?.relevance_score || 0) * 100)}%). Adapted ${res?.adapted_steps?.length || 0} mitigation steps. Estimated resolution: ${res?.estimated_resolution_minutes || 0} minutes.`;
           } else if (agent === "comms_agent") {
-            summary = `Created war room ${res.war_room_created}. Dispatched incident alerts to stakeholders: ${res.stakeholders_notified?.join(', ')}.`;
-            setSlackChannel(res.war_room_created);
-            setSlackStakeholders(res.stakeholders_notified || []);
-            setSlackMessage(res.slack_message);
+            summary = `Created war room ${res?.war_room_created || 'unknown'}. Dispatched incident alerts to stakeholders: ${res?.stakeholders_notified?.join(', ') || 'none'}.`;
+            setSlackChannel(res?.war_room_created || '');
+            setSlackStakeholders(res?.stakeholders_notified || []);
+            setSlackMessage(res?.slack_message || '');
           } else if (agent === "jira_agent") {
-            summary = `Logged Jira incident ticket ${res.ticket_id} (Priority: ${res.priority}). Assigned to SRE lead and linked deployment tags.`;
-            setJiraTicket(res.result || res);
+            summary = `Logged Jira incident ticket ${res?.ticket_id || 'unknown'} (Priority: ${res?.priority || 'unknown'}). Assigned to SRE lead and linked deployment tags.`;
+            setJiraTicket(res?.result || res || {});
           } else if (agent === "postmortem_agent") {
-            summary = `Generated blameless post-mortem report '${res.title}' and synchronized layout to Confluence wiki page.`;
-            setPostmortemDoc({ content: res.content, page_url: res.page_url });
+            summary = `Generated blameless post-mortem report '${res?.title || 'unknown'}' and synchronized layout to Confluence wiki page.`;
+            setPostmortemDoc({ content: res?.content || '', page_url: res?.page_url || '' });
           }
 
           setAgentStates((prev) => ({
