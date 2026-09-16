@@ -56,13 +56,27 @@ async def websocket_endpoint(websocket: WebSocket, incident_id: str):
         print(f"[WS-ConnectionError] Connection exception: {e}")
         manager.disconnect(incident_id, websocket)
 
-@app.get("/")
-def read_root():
+@app.get("/api/health")
+def read_health():
     return {
         "status": "online",
         "service": "IncidentIQ Backend Engine",
         "environment": os.getenv("ENVIRONMENT", "demo")
     }
+
+# Mount frontend production build if present
+frontend_dist = os.path.abspath(os.path.join(os.path.dirname(__file__), "../frontend/dist"))
+if os.path.exists(frontend_dist):
+    from fastapi.staticfiles import StaticFiles
+    app.mount("/", StaticFiles(directory=frontend_dist, html=True), name="static")
+else:
+    @app.get("/")
+    def read_root():
+        return {
+            "status": "online",
+            "service": "IncidentIQ Backend Engine",
+            "environment": os.getenv("ENVIRONMENT", "demo")
+        }
 
 if __name__ == "__main__":
     import uvicorn

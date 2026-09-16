@@ -9,7 +9,10 @@ import { Activity, Clock, Zap, History, RefreshCw, Layers } from 'lucide-react';
 
 const getBackendUrls = () => {
   const savedApi = localStorage.getItem("VITE_API_URL");
-  const apiBase = savedApi || import.meta.env.VITE_API_URL || "https://incidentiq-v3-be.loca.lt";
+  const defaultBase = (typeof window !== "undefined" && window.location.port !== "3000")
+    ? window.location.origin
+    : (import.meta.env.VITE_API_URL || "https://incidentiq-v3-be.loca.lt");
+  const apiBase = savedApi || defaultBase;
   const wsBase = apiBase.replace(/^http/, 'ws');
   return { apiBase, wsBase };
 };
