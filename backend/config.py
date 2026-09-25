@@ -41,4 +41,8 @@ def get_llm(temperature=0.3):
     )
 
 # Default LLM
-llm = get_llm(0.3)
+try:
+    llm = get_llm(0.3)
+except Exception:
+    llm = None
+

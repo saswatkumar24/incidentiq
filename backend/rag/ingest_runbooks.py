@@ -1,6 +1,11 @@
 import os
 from dotenv import load_dotenv
-from knowledge_base import add_runbook_to_kb
+
+try:
+    from rag.knowledge_base import add_runbook_to_kb
+except ImportError:
+    from knowledge_base import add_runbook_to_kb
+
 
 load_dotenv()
 
