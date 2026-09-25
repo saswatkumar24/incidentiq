@@ -5,7 +5,8 @@ import JiraPanel from './JiraPanel';
 import SlackPanel from './SlackPanel';
 import PostMortemPanel from './PostMortemPanel';
 import MetricsDashboard from './MetricsDashboard';
-import { Activity, Clock, Zap, History, RefreshCw, Layers } from 'lucide-react';
+import DocsHub from './DocsHub';
+import { Activity, Clock, Zap, History, RefreshCw, Layers, BookOpen } from 'lucide-react';
 
 const getBackendUrls = () => {
   const savedApi = localStorage.getItem("VITE_API_URL");
@@ -27,6 +28,7 @@ const Dashboard = () => {
   const [isResolved, setIsResolved] = useState(false);
   const [currentTime, setCurrentTime] = useState("");
   const [activeTab, setActiveTab] = useState("jira");
+  const [currentView, setCurrentView] = useState("live"); // 'live' | 'docs'
 
   // Output logs from agents
   const [jiraTicket, setJiraTicket] = useState(null);
@@ -276,6 +278,32 @@ const Dashboard = () => {
           </div>
         </div>
 
+        {/* Navigation Mode Switcher */}
+        <div className="flex items-center bg-slate-950/80 p-1 rounded-xl border border-slate-800 shadow-inner">
+          <button
+            onClick={() => setCurrentView("live")}
+            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              currentView === "live"
+                ? "bg-gradient-to-r from-red-600 to-amber-600 text-white shadow-md shadow-red-500/20"
+                : "text-slate-400 hover:text-slate-200"
+            }`}
+          >
+            <Zap size={14} />
+            <span>Live Command Center</span>
+          </button>
+          <button
+            onClick={() => setCurrentView("docs")}
+            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              currentView === "docs"
+                ? "bg-gradient-to-r from-sky-500 to-indigo-600 text-white shadow-md shadow-sky-500/20"
+                : "text-slate-400 hover:text-slate-200"
+            }`}
+          >
+            <BookOpen size={14} />
+            <span>Architecture &amp; Docs Hub</span>
+          </button>
+        </div>
+
         {/* Live system state banner */}
         <div className="flex items-center gap-4">
           <div className={`flex items-center gap-2 border px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-500 ${
@@ -311,7 +339,11 @@ const Dashboard = () => {
       </header>
 
       {/* Main Content Layout */}
-      <main className="flex-1 p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-[1600px] w-full mx-auto">
+      {currentView === "docs" ? (
+        <DocsHub onClose={() => setCurrentView("live")} />
+      ) : (
+        <>
+          <main className="flex-1 p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-[1600px] w-full mx-auto">
         {/* Left Side Column: Config & History (3 cols) */}
         <section className="lg:col-span-3 space-y-6">
           <AlertTrigger
@@ -427,6 +459,8 @@ const Dashboard = () => {
       <footer className="border-t border-slate-800 bg-slate-900/40 backdrop-blur-md px-6 py-4">
         <MetricsDashboard isResolved={isResolved || history.length > 3} />
       </footer>
+        </>
+      )}
     </div>
   );
 };
