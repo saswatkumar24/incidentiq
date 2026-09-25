@@ -29,15 +29,26 @@ import {
   Code,
   Clock,
   CheckCircle2,
-  AlertTriangle
+  AlertTriangle,
+  FolderOpen,
+  HelpCircle,
+  TrendingUp,
+  Percent,
+  Radio,
+  FileCheck
 } from 'lucide-react';
 
 const DocsHub = ({ onClose }) => {
-  const [activeTab, setActiveTab] = useState('architecture_diagram');
+  const [activeTab, setActiveTab] = useState('scenarios_e2e');
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [selectedScenarioIndex, setSelectedScenarioIndex] = useState(0);
+  const [selectedRunbook, setSelectedRunbook] = useState('database_connection');
 
   const navItems = [
-    { id: 'architecture_diagram', label: 'Architecture Diagram', icon: Layers, badge: 'Visual Blueprint' },
+    { id: 'scenarios_e2e', label: '6 Practical Scenarios (E2E)', icon: Zap, badge: 'Crucial' },
+    { id: 'telemetry_confidence', label: 'Logs, Triggers & Confidence', icon: TrendingUp, badge: 'AI Engine' },
+    { id: 'knowledge_base_files', label: 'Knowledge Base & Flat Files', icon: Database, badge: 'ChromaDB' },
+    { id: 'architecture_diagram', label: 'Architecture Diagram', icon: Layers, badge: 'Visual' },
     { id: 'presentation', label: 'Presentation & Pitch Deck', icon: Sparkles, badge: '15 Slides' },
     { id: 'detailed_workflow', label: 'Detailed Workflow', icon: Workflow, badge: 'Step-by-Step' },
     { id: 'project_report', label: 'Detailed Project Report', icon: FileText, badge: 'Executive' },
@@ -47,441 +58,231 @@ const DocsHub = ({ onClose }) => {
     { id: 'agent_deepdive', label: 'Agent Deep-Dive (All 6)', icon: Bot, badge: 'Core AI' },
   ];
 
-  // Exact 15 Presentation Slides matching the user's PDF & slides
-  const slides = [
+  // Practical 6 End-to-End Scenarios
+  const practicalScenarios = [
     {
-      id: 1,
-      title: "IncidentIQ",
-      subtitle: "Autonomous Incident Command Center Powered by Multi-Agent AI",
-      tag: "VLINK AI HACKATHON",
-      content: (
-        <div className="space-y-6 text-center py-8">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800 text-sky-400 font-mono text-[11px] font-bold uppercase tracking-widest border border-slate-700">
-            VLINK AI HACKATHON
-          </div>
-          <h1 className="text-4xl lg:text-6xl font-black tracking-tight text-white">
-            Incident<span className="text-emerald-400">IQ</span>
-          </h1>
-          <h2 className="text-lg lg:text-xl font-bold text-slate-300 max-w-2xl mx-auto">
-            Autonomous Incident Command Center Powered by Multi-Agent AI
-          </h2>
-          <p className="text-sm text-slate-400 max-w-xl mx-auto leading-relaxed">
-            An automated command center that reduces Mean Time to Resolution (MTTR) to under 90 seconds — coordinating AI agents to triage, diagnose, mitigate, and write post-mortems for outages.
-          </p>
-          <div className="pt-6 border-t border-slate-800/80 max-w-md mx-auto text-left">
-            <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider block">ARCHITECT</span>
-            <span className="text-sm font-bold text-slate-200">SASWAT KUMAR PATRO</span>
-            <p className="text-xs text-slate-400">Lead SRE & AI Architect • VLINK</p>
-          </div>
-        </div>
-      )
+      id: 'scenario_1',
+      title: 'Payment Gateway DB Pool Exhaustion (P1 Outage)',
+      severity: 'P1 CRITICAL',
+      service: 'payment-gateway-service',
+      blastRadius: '14,200 active checkout transactions (87% error rate)',
+      slaLimit: '15 Minutes',
+      mttrActual: '68 Seconds',
+      startTrigger: 'Prometheus Alertmanager fires High5xxErrorRate webhook due to P99 latency exceeding 30s.',
+      rootCause: 'Deployment PROJ-4821 reduced DB max-connections from 200 to 20, causing instant thread queue starvation.',
+      confidence: '98%',
+      confidenceBreakdown: 'Deploy correlation (+35%) + Log QueuePool signature (+30%) + 98.2% pool saturation (+20%) + Excluded upstream processor latency (+13%) = 98%',
+      runbookUsed: 'database_connection.md (v1.5) & Payment Gateway Recovery Runbook v2.3',
+      steps: [
+        { time: '00:00:00', title: 'Webhook Trigger Ingested', detail: 'POST /api/incident/trigger received payload with error_rate=87% on payment-gateway-service. SQLite incident record initialized.' },
+        { time: '00:00:03', title: 'Triage Agent Classification', detail: 'Classifies as P1 Critical. Calculates revenue blast radius ($45,000/hr) and marks SLA breach countdown at 15 minutes.' },
+        { time: '00:00:15', title: 'RCA Agent Deep Diagnostics', detail: 'Queries Prometheus metrics & inspects recent Docker image git tags. Isolates commit PROJ-4821 pushed 16m ago changing pool limits. Rules out upstream Visa network downtime.' },
+        { time: '00:00:22', title: 'Runbook Agent Vector Match', detail: 'ChromaDB query matches database_connection.md with 95% similarity. Synthesizes kubectl rollback command: kubectl rollout undo deployment/payment-gateway-service.' },
+        { time: '00:00:28', title: 'Comms Agent War Room Setup', detail: 'Provisions Slack channel #inc-payment-gateway-p1-warroom. Broadcasts executive status to On-Call SRE, VP Eng, and FinOps leads.' },
+        { time: '00:00:30', title: 'Jira Agent Incident Ticketing', detail: 'Files Jira ticket INC-4821 with priority=Critical. Directly links offending development issue PROJ-4821 as rollback target.' },
+        { time: '00:01:08', title: 'Mitigation Execution & Recovery', detail: 'Connection pool rolled back to 200 connections. Error rate drops from 87% to 0.02%. P99 latency normalizes to 85ms.' },
+        { time: '00:01:15', title: 'Post-Mortem Published to Confluence', detail: 'Post-Mortem Agent auto-publishes 8-section blameless report to Confluence with 5 preventative action items. Incident marked RESOLVED.' }
+      ]
     },
     {
-      id: 2,
-      title: "Executive Summary",
-      subtitle: "The Next Generation of Incident Operations",
-      tag: "Slide 2 / 15",
-      content: (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center py-6">
-          <div className="space-y-4 text-slate-300">
-            <h3 className="text-2xl font-bold text-white">The Next Generation of Incident Operations</h3>
-            <p className="text-base leading-relaxed">
-              <strong className="text-white">IncidentIQ</strong> is an autonomous operational system that intercepts system alerts, correlates telemetry, and resolves issues — <span className="text-emerald-400 font-semibold">eliminating human delays in the operational loop.</span>
-            </p>
-          </div>
-          <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-900 to-indigo-950/60 border border-slate-800 flex items-center justify-center min-h-[220px]">
-            <div className="text-center space-y-3">
-              <Bot className="text-sky-400 mx-auto animate-pulse" size={48} />
-              <span className="text-xs font-mono text-slate-400 uppercase tracking-wider block">Autonomous SRE Swarm</span>
-              <p className="text-xs text-slate-300 font-semibold">Zero-Human Handoff Operational Loop</p>
-            </div>
-          </div>
-        </div>
-      )
+      id: 'scenario_2',
+      title: 'Kafka Consumer Lag & Poison Pill Deserialization (P2 Outage)',
+      severity: 'P2 HIGH',
+      service: 'order-fulfillment-stream',
+      blastRadius: '582,000 delayed orders across 4 processing queues',
+      slaLimit: '30 Minutes',
+      mttrActual: '74 Seconds',
+      startTrigger: 'Datadog monitor alert: KafkaConsumerLagSpike (>500k messages threshold breached).',
+      rootCause: 'Deployment PROJ-4912 introduced unhandled NullPointerException during coupon code deserialization (CouponDeserializer.java:42).',
+      confidence: '95%',
+      confidenceBreakdown: 'Exact stack trace match (+35%) + Lag metric threshold (+25%) + Commit diff correlation (+20%) + Excluded network broker disconnects (+15%) = 95%',
+      runbookUsed: 'kafka_consumer.md (v1.1) & Kafka Consumer Lag Remediation Runbook',
+      steps: [
+        { time: '00:00:00', title: 'Datadog Lag Alert Ingested', detail: 'Order stream partition 3 lag exceeded 582,000 items. Consumer threads terminating in crash-loop.' },
+        { time: '00:00:04', title: 'Triage Classification', detail: 'Classified as P2 High. Evaluates fulfillment delay impact and alerts logistics operations team.' },
+        { time: '00:00:18', title: 'RCA Error Trace Inspection', detail: 'Inspects worker logs: java.lang.NullPointerException at CouponDeserializer.java:42. Code called .toUpperCase() on null coupon field.' },
+        { time: '00:00:26', title: 'Runbook Agent Adaptation', detail: 'Fetches kafka_consumer.md. Formulates 2-step fix: Route invalid offset payloads to Dead Letter Queue (DLQ) and spin up 3 temporary partition consumers.' },
+        { time: '00:00:32', title: 'Comms Agent Slack Broadcast', detail: 'Spawns #inc-kafka-lag-p2-warroom. Notifies order-processing and customer care leads.' },
+        { time: '00:00:34', title: 'Jira Agent Ticketing', detail: 'Files INC-4912, tags backend middleware squad, and links PR-4912.' },
+        { time: '00:01:14', title: 'Queue Drain & Resolution', detail: 'Dead letter queue activated. Consumers resume processing at 22,000 msgs/sec. Backlog fully drained.' }
+      ]
     },
     {
-      id: 3,
-      title: "Core Capabilities",
-      subtitle: "Three Pillars of Autonomous Operations",
-      tag: "Slide 3 / 15",
-      content: (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 py-6">
-          <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-3">
-            <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
-              <Bot size={20} />
-            </div>
-            <h4 className="text-sm font-bold text-white">6 Specialized AI Agents</h4>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Sequential crew running on Gemini 1.5 Pro / Flash, executing complex diagnostic logic.
-            </p>
-          </div>
-          <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-3">
-            <div className="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
-              <Activity size={20} />
-            </div>
-            <h4 className="text-sm font-bold text-white">Real-Time Telemetry</h4>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Integrates live metrics, historical outage DBs, and Confluence runbooks.
-            </p>
-          </div>
-          <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-              <Zap size={20} />
-            </div>
-            <h4 className="text-sm font-bold text-white">Zero Human Handoff</h4>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Full lifecycle automation from initial alert trigger to final post-mortem.
-            </p>
-          </div>
-        </div>
-      )
+      id: 'scenario_3',
+      title: 'API Gateway 504 Timeout Storm via Ingress Rate-Limiting (P2 Outage)',
+      severity: 'P2 HIGH',
+      service: 'api-gateway (checkout & search routes)',
+      blastRadius: '46.2% of public ingress traffic (4,500 blocked connections)',
+      slaLimit: '25 Minutes',
+      mttrActual: '52 Seconds',
+      startTrigger: 'CloudWatch Canary synthetic test alerts on 504 Gateway Timeouts on /v1/checkout.',
+      rootCause: 'Deployment PROJ-4990 incorrectly configured local_limit per IP from 1000/s to 10/s, exhausting Redis connection tracking pools.',
+      confidence: '98%',
+      confidenceBreakdown: 'Ingress log rule match (+40%) + Rate limiter threshold comparison (+25%) + Redis pool timeout signature (+20%) + Excluded upstream service crashes (+13%) = 98%',
+      runbookUsed: 'api_timeout.md (v3.0)',
+      steps: [
+        { time: '00:00:00', title: 'CloudWatch Synthetic Alarm', detail: 'Public API latency spiked to 8,500ms; 46.2% of incoming mobile checkout requests receiving 504 Timeouts.' },
+        { time: '00:00:02', title: 'Triage Classification', detail: 'Classifies as P2 High. Identifies customer-facing API degradation.' },
+        { time: '00:00:14', title: 'RCA Diagnosis', detail: 'Scans ingress controller logs: local_limit=10/s detected. Legitimate client IPs blocked, exhausting Redis tracking sockets.' },
+        { time: '00:00:20', title: 'Runbook Action Formulation', detail: 'Adapts api_timeout.md: hot-patches rate-limiter threshold back to 1000/s and flushes Redis tracking keys.' },
+        { time: '00:00:25', title: 'Slack & Jira Notifications', detail: 'Notifies #traffic-engineering and creates Jira ticket INC-4990 with linked PROJ-4990.' },
+        { time: '00:00:52', title: 'Hot-Patch Verification', detail: 'Rate limits restored to 1000/s. Ingress P99 drops below 120ms. 504 error rate drops to 0%.' }
+      ]
     },
     {
-      id: 4,
-      title: "The SRE Challenge",
-      subtitle: "The Broken Incident Response Pipeline",
-      tag: "Slide 4 / 15",
-      content: (
-        <div className="space-y-4 py-4">
-          <p className="text-xs text-slate-400">The traditional incident response pipeline suffers from four critical pain points:</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-            <div className="p-3.5 rounded-xl bg-slate-900/70 border border-slate-800 flex items-start gap-3">
-              <ShieldAlert className="text-red-400 flex-shrink-0 mt-0.5" size={18} />
-              <div>
-                <h5 className="text-xs font-bold text-slate-200">Alert Fatigue</h5>
-                <p className="text-[11px] text-slate-400 mt-0.5">Operations engineers are flooded with hundreds of uncorrelated alerts daily, masking critical incidents.</p>
-              </div>
-            </div>
-            <div className="p-3.5 rounded-xl bg-slate-900/70 border border-slate-800 flex items-start gap-3">
-              <Clock className="text-amber-400 flex-shrink-0 mt-0.5" size={18} />
-              <div>
-                <h5 className="text-xs font-bold text-slate-200">High MTTR</h5>
-                <p className="text-[11px] text-slate-400 mt-0.5">Finding root cause, searching wikis, and applying fixes manually takes hours every single time.</p>
-              </div>
-            </div>
-            <div className="p-3.5 rounded-xl bg-slate-900/70 border border-slate-800 flex items-start gap-3">
-              <Database className="text-sky-400 flex-shrink-0 mt-0.5" size={18} />
-              <div>
-                <h5 className="text-xs font-bold text-slate-200">Knowledge Silos</h5>
-                <p className="text-[11px] text-slate-400 mt-0.5">Prior incident logs and engineer comments are buried and rarely shared across teams.</p>
-              </div>
-            </div>
-            <div className="p-3.5 rounded-xl bg-slate-900/70 border border-slate-800 flex items-start gap-3">
-              <FileText className="text-purple-400 flex-shrink-0 mt-0.5" size={18} />
-              <div>
-                <h5 className="text-xs font-bold text-slate-200">Missing Documentation</h5>
-                <p className="text-[11px] text-slate-400 mt-0.5">Writing blameless post-mortems is often delayed, causing organizations to lose critical learning.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )
+      id: 'scenario_4',
+      title: 'Third-Party Payment Gateway Outage & Auto-Failover (P1 Outage)',
+      severity: 'P1 CRITICAL',
+      service: 'external-checkout-bridge',
+      blastRadius: '100% of Visa credit card transactions failing',
+      slaLimit: '15 Minutes',
+      mttrActual: '45 Seconds',
+      startTrigger: 'Synthetic monitoring ping alerts: 100% packet loss and SocketTimeoutException on api.visa.com.',
+      rootCause: 'Upstream payment processor network fiber cut in Virginia data center; internal DB pools healthy at 12%.',
+      confidence: '96%',
+      confidenceBreakdown: 'Zero local deployment within 4h (+30%) + External endpoint socket timeout (+35%) + Low local CPU/DB saturation (+20%) + Multi-region ping loss (+11%) = 96%',
+      runbookUsed: 'payment_gateway.md (v3.1)',
+      steps: [
+        { time: '00:00:00', title: 'External Connectivity Alert', detail: 'Visa API endpoints timing out after 30 seconds; 95% checkout failures.' },
+        { time: '00:00:03', title: 'Triage Assessment', detail: 'Classified as P1. High financial exposure; alerts on-call payment architect.' },
+        { time: '00:00:12', title: 'RCA Root Cause Isolation', detail: 'Verifies internal database health (low pool usage). Identifies upstream external provider outage.' },
+        { time: '00:00:18', title: 'Runbook Dynamic Selection', detail: 'Selects payment_gateway.md. Adapts failover command to switch billing routes to secondary provider (Mastercard/Adyen).' },
+        { time: '00:00:24', title: 'Automated Failover Route', detail: 'Executes circuit breaker trip in gateway router. Reroutes all pending transactions to secondary gateway.' },
+        { time: '00:00:45', title: 'Transactions Restored', detail: 'Checkout success rate returns to 99.8%. War room and Jira updated with upstream vendor ticket.' }
+      ]
     },
     {
-      id: 5,
-      title: "The Solution: IncidentIQ",
-      subtitle: "Fully Autonomous Incident Lifecycle Control",
-      tag: "Slide 5 / 15",
-      content: (
-        <div className="space-y-6 py-4 text-center">
-          <p className="text-sm text-slate-300 max-w-xl mx-auto">
-            IncidentIQ intercepts every alert, runs a coordinated AI crew through diagnosis and remediation, and closes the loop with auto-generated documentation — <span className="text-emerald-400 font-bold">all in under 90 seconds.</span>
-          </p>
-          <div className="grid grid-cols-4 gap-3 pt-2">
-            <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
-              <span className="text-lg font-black text-sky-400">1. Intercept</span>
-              <p className="text-[11px] text-slate-400">Alert Ingestion</p>
-            </div>
-            <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
-              <span className="text-lg font-black text-indigo-400">2. Diagnose</span>
-              <p className="text-[11px] text-slate-400">Multi-Agent RCA</p>
-            </div>
-            <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
-              <span className="text-lg font-black text-purple-400">3. Mitigate</span>
-              <p className="text-[11px] text-slate-400">Parametrized Fix</p>
-            </div>
-            <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
-              <span className="text-lg font-black text-emerald-400">4. Close</span>
-              <p className="text-[11px] text-slate-400">Zero-Touch Comms</p>
-            </div>
-          </div>
-        </div>
-      )
+      id: 'scenario_5',
+      title: 'Redis Session Cache Eviction Cascade on Auth Service (P1 Outage)',
+      severity: 'P1 CRITICAL',
+      service: 'auth-session-cluster',
+      blastRadius: 'All user login and token validation requests blocked (100% auth failure)',
+      slaLimit: '10 Minutes',
+      mttrActual: '81 Seconds',
+      startTrigger: 'Auth service reporting OOMCommandNotAllowed from Redis cache cluster.',
+      rootCause: 'Token TTL config omitted in deployment PROJ-4710; Redis memory filled to 100% without an eviction policy configured (noeviction default).',
+      confidence: '93%',
+      confidenceBreakdown: 'Redis OOM error log match (+35%) + Memory metric saturation at 100% (+30%) + Commit diff showing omitted TTL (+20%) + Excluded network partitioning (+8%) = 93%',
+      runbookUsed: 'database_connection.md (Redis Cluster Playbook)',
+      steps: [
+        { time: '00:00:00', title: 'OOM Alert Triggered', detail: 'Redis node reports maxmemory reached; reject write commands with OOMCommandNotAllowed.' },
+        { time: '00:00:03', title: 'Triage Classification', detail: 'Classified as P1 Critical. Customer login blocked globally.' },
+        { time: '00:00:16', title: 'RCA Log Analysis', detail: 'Finds deployment PROJ-4710 omitted expiration key TTL. Keys never expired; memory exhausted.' },
+        { time: '00:00:24', title: 'Runbook Adaptation', detail: 'Adapts CLI command: redis-cli CONFIG SET maxmemory-policy allkeys-lru and flushes expired auth keys.' },
+        { time: '00:00:30', title: 'Comms & Jira', detail: 'Creates war room #inc-auth-p1-warroom and files Jira ticket INC-4710 with security leads tagged.' },
+        { time: '00:01:21', title: 'Eviction Applied & Normalization', detail: 'LRU eviction policy applied. 3.2GB of stale session keys purged. Auth latency returns to 18ms.' }
+      ]
     },
     {
-      id: 6,
-      title: "Enterprise Technology Stack",
-      subtitle: "Built for Speed, Typesafety, and Reliability",
-      tag: "Slide 6 / 15",
-      content: (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
-          <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2">
-            <span className="text-[11px] font-bold text-sky-400 uppercase tracking-wider block">Core Backend</span>
-            <p className="text-sm font-semibold text-slate-200">Python 3.11 + FastAPI on Uvicorn</p>
-            <p className="text-xs text-slate-400">For high-performance async operations and WebSocket event loops.</p>
-          </div>
-          <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2">
-            <span className="text-[11px] font-bold text-purple-400 uppercase tracking-wider block">SRE Agent Framework</span>
-            <p className="text-sm font-semibold text-slate-200">CrewAI + Gemini 1.5 Pro</p>
-            <p className="text-xs text-slate-400">For sequential, persona-driven agent workflows and diagnostics.</p>
-          </div>
-          <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2">
-            <span className="text-[11px] font-bold text-amber-400 uppercase tracking-wider block">Vector Database</span>
-            <p className="text-sm font-semibold text-slate-200">ChromaDB</p>
-            <p className="text-xs text-slate-400">Storing vectorized Confluence runbooks for semantic RAG retrieval.</p>
-          </div>
-          <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2">
-            <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider block">Frontend Interface</span>
-            <p className="text-sm font-semibold text-slate-200">React.js + Tailwind CSS</p>
-            <p className="text-xs text-slate-400">Delivering glassmorphic dark-theme real-time SRE dashboards.</p>
-          </div>
-        </div>
-      )
-    },
-    {
-      id: 7,
-      title: "SRE Multi-Agent Crew",
-      subtitle: "6 Persona-Based AI Agents Collaborating Sequentially",
-      tag: "Slide 7 / 15",
-      content: (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 py-4 text-xs">
-          <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
-            <span className="font-bold text-sky-400 block">01. Triage Agent</span>
-            <p className="text-slate-400 text-[11px]">Classifies alert severity and verifies SLA windows.</p>
-          </div>
-          <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
-            <span className="font-bold text-indigo-400 block">02. RCA Agent</span>
-            <p className="text-slate-400 text-[11px]">Pulls metrics and compares telemetry against past outages.</p>
-          </div>
-          <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
-            <span className="font-bold text-purple-400 block">03. Runbook Agent</span>
-            <p className="text-slate-400 text-[11px]">Semantic vector search on wikis to find the correct recovery guide.</p>
-          </div>
-          <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
-            <span className="font-bold text-emerald-400 block">04. Comms Agent</span>
-            <p className="text-slate-400 text-[11px]">Moderates Slack channels and broadcasts status cards.</p>
-          </div>
-          <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
-            <span className="font-bold text-amber-400 block">05. Jira Agent</span>
-            <p className="text-slate-400 text-[11px]">Creates tickets and records deployment change logs.</p>
-          </div>
-          <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
-            <span className="font-bold text-rose-400 block">06. Post-Mortem Agent</span>
-            <p className="text-slate-400 text-[11px]">Automatically generates structured blameless post-mortems.</p>
-          </div>
-        </div>
-      )
-    },
-    {
-      id: 8,
-      title: "Diagnostic Workflow & Pipeline",
-      subtitle: "Step-by-Step Reasoning Flow",
-      tag: "Slide 8 / 15",
-      content: (
-        <div className="space-y-6 py-6">
-          <div className="flex items-center justify-between max-w-lg mx-auto text-center">
-            <div>
-              <div className="w-12 h-12 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center mx-auto text-sky-400 font-bold mb-1">1</div>
-              <span className="text-xs font-semibold text-slate-300">Trigger</span>
-            </div>
-            <ArrowRight size={16} className="text-slate-600" />
-            <div>
-              <div className="w-12 h-12 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center mx-auto text-indigo-400 font-bold mb-1">2</div>
-              <span className="text-xs font-semibold text-slate-300">Query</span>
-            </div>
-            <ArrowRight size={16} className="text-slate-600" />
-            <div>
-              <div className="w-12 h-12 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center mx-auto text-purple-400 font-bold mb-1">3</div>
-              <span className="text-xs font-semibold text-slate-300">Correlation</span>
-            </div>
-            <ArrowRight size={16} className="text-slate-600" />
-            <div>
-              <div className="w-12 h-12 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center mx-auto text-emerald-400 font-bold mb-1">4</div>
-              <span className="text-xs font-semibold text-slate-300">Decision</span>
-            </div>
-          </div>
-          <div className="p-4 rounded-xl bg-slate-900/60 border-l-4 border-indigo-500 text-xs text-slate-300">
-            The <strong>RCA Agent</strong> drives comparative analysis, outputting likelihood weightings to eliminate operational guesswork.
-          </div>
-        </div>
-      )
-    },
-    {
-      id: 9,
-      title: "Comparative RCA Output",
-      subtitle: "Data-Driven Root Cause Identification",
-      tag: "Slide 9 / 15",
-      content: (
-        <div className="space-y-4 py-4">
-          <span className="text-xs font-mono text-slate-400 uppercase block">Root Cause Hypotheses &amp; Likelihood %:</span>
-          <div className="space-y-3">
-            <div>
-              <div className="flex justify-between text-xs font-semibold text-slate-200 mb-1">
-                <span>DB Pool Limitation</span>
-                <span className="text-emerald-400 font-bold">85%</span>
-              </div>
-              <div className="w-full bg-slate-800 h-6 rounded-lg overflow-hidden flex">
-                <div className="bg-emerald-500 h-full rounded-lg" style={{ width: '85%' }}></div>
-              </div>
-            </div>
-            <div>
-              <div className="flex justify-between text-xs font-semibold text-slate-300 mb-1">
-                <span>Upstream Visa Outage</span>
-                <span className="text-slate-400 font-bold">10%</span>
-              </div>
-              <div className="w-full bg-slate-800 h-6 rounded-lg overflow-hidden flex">
-                <div className="bg-sky-600/50 h-full rounded-lg" style={{ width: '10%' }}></div>
-              </div>
-            </div>
-            <div>
-              <div className="flex justify-between text-xs font-semibold text-slate-300 mb-1">
-                <span>Expired TLS Certificate</span>
-                <span className="text-slate-400 font-bold">5%</span>
-              </div>
-              <div className="w-full bg-slate-800 h-6 rounded-lg overflow-hidden flex">
-                <div className="bg-slate-600 h-full rounded-lg" style={{ width: '5%' }}></div>
-              </div>
-            </div>
-          </div>
-          <p className="text-[11px] text-slate-400 pt-2">
-            IncidentIQ outputs weighted likelihood scores, clearly rules out alternative causes, and recommends secondary fallbacks if primary mitigations fail.
-          </p>
-        </div>
-      )
-    },
-    {
-      id: 10,
-      title: "Runbook Adaptation & Sync",
-      subtitle: "Semantic RAG Retrieval + Enterprise Tool Sync",
-      tag: "Slide 10 / 15",
-      content: (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 py-4 text-xs">
-          <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-            <span className="font-bold text-purple-400 block">1. ChromaDB Playbook Index</span>
-            <p className="text-slate-400 text-[11px]">Confluence playbooks vectorized for semantic similarity matching.</p>
-          </div>
-          <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-            <span className="font-bold text-sky-400 block">2. Context Adaptation</span>
-            <p className="text-slate-400 text-[11px]">Generic wiki instructions translated into parameter-mapped commands with live IDs.</p>
-          </div>
-          <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-            <span className="font-bold text-amber-400 block">3. Toolchain Integration</span>
-            <p className="text-slate-400 text-[11px]">Auto-creates Slack channels, logs Jira tickets with SLA bounds, writes post-mortems.</p>
-          </div>
-          <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-            <span className="font-bold text-emerald-400 block">4. Real-Time Dashboard</span>
-            <p className="text-slate-400 text-[11px]">Glassmorphic WebSocket console broadcasting agent steps and live preview panels.</p>
-          </div>
-        </div>
-      )
-    },
-    {
-      id: 11,
-      title: "Live Operations Console",
-      subtitle: "Real-Time Agent Observation and Metric Correlation",
-      tag: "Slide 11 / 15",
-      content: (
-        <div className="p-6 rounded-2xl bg-slate-950/80 border border-slate-800 text-center space-y-4 py-8">
-          <Activity className="text-sky-400 mx-auto" size={40} />
-          <h4 className="text-lg font-bold text-white">Interactive SRE Dashboard</h4>
-          <p className="text-xs text-slate-400 max-w-md mx-auto">
-            Real-time multi-agent execution timeline, live simulated Prometheus metrics HUD, active war room chat, and instantaneous ticket creation.
-          </p>
-        </div>
-      )
-    },
-    {
-      id: 12,
-      title: "Business ROI & SLA Gains",
-      subtitle: "Maximizing Operations Efficiency",
-      tag: "Slide 12 / 15",
-      content: (
-        <div className="space-y-6 py-4">
-          <div className="grid grid-cols-3 gap-4 text-center">
-            <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-1">
-              <span className="text-4xl font-black text-emerald-400">2s</span>
-              <span className="text-xs font-bold text-slate-200 uppercase block">MTTD</span>
-              <p className="text-[11px] text-slate-500">Mean Time to Detection — down from 15 minutes</p>
-            </div>
-            <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-1">
-              <span className="text-4xl font-black text-purple-400">90s</span>
-              <span className="text-xs font-bold text-slate-200 uppercase block">MTTR</span>
-              <p className="text-[11px] text-slate-500">Mean Time to Resolution — down from 90 minutes</p>
-            </div>
-            <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-1">
-              <span className="text-4xl font-black text-sky-400">0min</span>
-              <span className="text-xs font-bold text-slate-200 uppercase block">Doc Overhead</span>
-              <p className="text-[11px] text-slate-500">Post-mortem writing time — down from hours of manual effort</p>
-            </div>
-          </div>
-          <div className="p-3.5 rounded-xl bg-emerald-950/20 border border-emerald-500/30 flex items-center gap-2 text-xs text-emerald-300">
-            <CheckCircle2 size={16} className="text-emerald-400 flex-shrink-0" />
-            <span>Team burnout significantly minimized by automatically filtering noisy alerts and alert storms.</span>
-          </div>
-        </div>
-      )
-    },
-    {
-      id: 13,
-      title: "Stability & Roadmap",
-      subtitle: "Scaling IncidentIQ Enterprise-Wide",
-      tag: "Slide 13 / 15",
-      content: (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-4 text-xs">
-          <div className="space-y-3">
-            <h4 className="text-sm font-bold text-sky-400 flex items-center gap-2">
-              <ShieldAlert size={16} /> Demo Reliability Strategy
-            </h4>
-            <p className="text-slate-400 leading-relaxed">
-              Gemini API free tier limits requests to 15 RPM. IncidentIQ pre-seeds a local JSON resolution cache mapping prompt hashes to responses — enabling 100% offline operation with zero failures during live pitches.
-            </p>
-          </div>
-          <div className="space-y-3">
-            <h4 className="text-sm font-bold text-emerald-400 flex items-center gap-2">
-              <Workflow size={16} /> Future Roadmap
-            </h4>
-            <ul className="space-y-2 text-slate-400">
-              <li><strong>Live Integrations:</strong> Direct hooks to Kubernetes clusters and Terraform state.</li>
-              <li><strong>Self-Healing Actions:</strong> Automated canary rollbacks and dynamic replica scaling.</li>
-            </ul>
-          </div>
-        </div>
-      )
-    },
-    {
-      id: 14,
-      title: "Questions?",
-      subtitle: "Thank you for your time and attention.",
-      tag: "Slide 14 / 15",
-      content: (
-        <div className="text-center py-10 space-y-6">
-          <h2 className="text-4xl font-black text-white">Questions?</h2>
-          <p className="text-slate-400 text-sm">Thank you for your time and attention.</p>
-          <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 max-w-sm mx-auto space-y-1">
-            <h3 className="text-sm font-bold text-emerald-400">Saswat Kumar Patro</h3>
-            <p className="text-xs text-slate-300">Lead SRE &amp; AI Architect</p>
-            <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest block pt-1">VLINK</span>
-          </div>
-        </div>
-      )
-    },
-    {
-      id: 15,
-      title: "Image Sources & References",
-      subtitle: "Attributions & Technical Assets",
-      tag: "Slide 15 / 15",
-      content: (
-        <div className="space-y-3 py-4 text-xs font-mono text-slate-400">
-          <p className="text-slate-300 font-bold mb-2">Attributions &amp; External References:</p>
-          <p>• VLINK Corporate Brand &amp; Guidelines</p>
-          <p>• Google Gemini 1.5 Pro / Flash Generative Models API</p>
-          <p>• CrewAI Autonomous Agent Framework</p>
-          <p>• ChromaDB Open-Source Embedding Vector Database</p>
-          <p>• FastAPI Asynchronous High-Performance Web Framework</p>
-        </div>
-      )
+      id: 'scenario_6',
+      title: 'Kubernetes Worker Node Disk Pressure & Pod Eviction Loop (P2 Outage)',
+      severity: 'P2 MEDIUM',
+      service: 'k8s-worker-node-4',
+      blastRadius: '5 notification worker pods repeatedly evicted',
+      slaLimit: '45 Minutes',
+      mttrActual: '59 Seconds',
+      startTrigger: 'Kubernetes kubelet fires KubeNodeDiskPressure on node ip-10-0-4-82.',
+      rootCause: 'Unrotated Docker container log files in /var/log/pods saturated node root disk to 99.8% capacity.',
+      confidence: '97%',
+      confidenceBreakdown: 'Kubelet event disk pressure (+40%) + df -h disk metric 99.8% (+30%) + Docker log path verification (+15%) + Node health check exclusion (+12%) = 97%',
+      runbookUsed: 'k8s_node_disk_cleanup.md',
+      steps: [
+        { time: '00:00:00', title: 'Kubelet Disk Pressure Alert', detail: 'Kubelet unable to write container runtime volumes. Pods entering Terminating/Evicted state.' },
+        { time: '00:00:04', title: 'Triage Classification', detail: 'Classifies as P2 Medium. Affected pods have backup replicas on other nodes.' },
+        { time: '00:00:15', title: 'RCA File System Inspection', detail: 'Queries node disk stats: /var/log/pods consuming 94GB due to unrotated stdout JSON logs.' },
+        { time: '00:00:22', title: 'Runbook Adaptation', detail: 'Synthesizes node cordon and log vacuuming command: journalctl --vacuum-size=500M && docker system prune -f.' },
+        { time: '00:00:30', title: 'Comms & Jira Action', detail: 'Alerts #infra-sre channel and creates Jira ticket INC-4680 for automated log rotation daemonset.' },
+        { time: '00:00:59', title: 'Disk Cleaned & Node Uncordoned', detail: 'Disk usage drops from 99.8% to 24%. Worker node uncordoned; all pods resume Running state.' }
+      ]
     }
   ];
+
+  // Runbook flat files content
+  const runbooksData = {
+    database_connection: {
+      filename: 'backend/rag/runbooks/database_connection.md',
+      title: 'PostgreSQL / MySQL Database Connection Pool Exhaustion Runbook v1.5',
+      symptoms: [
+        'HTTP 500 responses with database connection errors',
+        'Stack trace contains TimeoutError: QueuePool limit of size X reached',
+        'Applications report failure to establish connection within timeout window',
+        'Database metrics show connection slots exhausted (100% usage)'
+      ],
+      rootCauses: [
+        'Application connection leaks (sessions not closed properly in code)',
+        'Sudden traffic spike overloading default connection pool allocations',
+        'Database server max connections configuration mismatch (too low)',
+        'Connection limits reduced in deployment templates (e.g. from 200 to 20)'
+      ],
+      remediationSteps: [
+        '1. Connect to PostgreSQL and query active connections: SELECT count(*), state FROM pg_stat_activity GROUP BY state;',
+        '2. Identify query pattern and terminate long-running idle sessions: SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE state = \'idle\' AND state_change < now() - interval \'5 minutes\';',
+        '3. Verify current service deployment configuration limits: kubectl get deployment -o yaml | grep max-connections',
+        '4. If a recent release reduced max connections (e.g., from 200 to 20): Rollback to previous known good release configuration: kubectl rollout undo deployment/<service-name>',
+        '5. Verify application recovers and connection pool saturation drops below 50%.'
+      ]
+    },
+    kafka_consumer: {
+      filename: 'backend/rag/runbooks/kafka_consumer.md',
+      title: 'Kafka Consumer Lag & Poison Pill Deserialization Runbook v1.1',
+      symptoms: [
+        'Consumer group lag metric increasing rapidly above threshold (>500,000)',
+        'Consumer pod logs reporting repeated NullPointerException or SerializationException',
+        'Partitions stuck with no offset commits progressing'
+      ],
+      rootCauses: [
+        'Poison pill message with missing required JSON fields or unexpected schema',
+        'Unhandled exception crashing the partition consumer worker thread',
+        'Downstream service dependency timeout causing batch processing stalls'
+      ],
+      remediationSteps: [
+        '1. Inspect partition logs to identify the exact poison pill payload and offset.',
+        '2. Route offending message offset to Dead Letter Queue (DLQ): kafka-consumer-groups --bootstrap-server localhost:9092 --group order-group --topic orders --reset-offsets --to-offset <offset+1> --execute',
+        '3. Scale consumer deployment replicas to rapidly process accumulated backlog: kubectl scale deployment/kafka-order-consumer --replicas=6',
+        '4. Monitor lag metric to ensure it trends down to baseline (<1,000).'
+      ]
+    },
+    api_timeout: {
+      filename: 'backend/rag/runbooks/api_timeout.md',
+      title: 'API Gateway 504 Gateway Timeout Troubleshooting Runbook v3.0',
+      symptoms: [
+        'Widespread HTTP 504 Gateway Timeout and 429 Too Many Requests responses',
+        'Upstream latency metrics exceed gateway read timeout limit (e.g., >5,000ms)',
+        'Redis rate limiting connection pool exhausted'
+      ],
+      rootCauses: [
+        'Ingress rate limit misconfiguration (e.g., threshold set to 10/s instead of 1000/s)',
+        'Upstream microservice thread pool exhaustion or database lock contention',
+        'Redis session store latency spike delaying rate limit evaluation'
+      ],
+      remediationSteps: [
+        '1. Inspect active ingress rate limiter rule limits: kubectl describe ingress <service-ingress>',
+        '2. If limits are misconfigured, hot-patch ingress configuration or execute rollout undo: kubectl rollout undo deployment/api-gateway',
+        '3. Flush rate limiting tracking cache if Redis connection pool is blocked: redis-cli FLUSHDB',
+        '4. Scale gateway replicas to handle connection retry bursts: kubectl scale deployment/api-gateway --replicas=5'
+      ]
+    },
+    payment_gateway: {
+      filename: 'backend/rag/runbooks/payment_gateway.md',
+      title: 'Third-Party Payment Gateway Circuit Breaker Runbook v3.1',
+      symptoms: [
+        'HTTP 502/503/504 errors on checkout and billing endpoints',
+        'Logs show SocketTimeoutException or ConnectionRefusedException when calling external payment partner APIs',
+        'Payment transaction drop-off rate > 90%'
+      ],
+      rootCauses: [
+        'External payment processor regional outage or network fiber partition',
+        'Expired SSL/TLS client certificate or expired partner API credentials',
+        'Circuit breaker threshold misconfigured or failover routes disabled'
+      ],
+      remediationSteps: [
+        '1. Verify external partner status page (e.g. Visa, Stripe, Braintree developer status).',
+        '2. If external provider is down, activate secondary payment route failover via router config: curl -X POST https://api.internal/admin/routes/failover -d \'{"target": "secondary_provider"}\'',
+        '3. If certificate expired, renew certificate and reload proxy ingresses.',
+        '4. Confirm checkout transaction error rate drops below 1%.'
+      ]
+    }
+  };
 
   return (
     <div className="flex-1 flex flex-col lg:flex-row max-w-[1700px] w-full mx-auto p-4 lg:p-6 gap-6 min-h-[calc(100vh-80px)]">
@@ -496,9 +297,9 @@ const DocsHub = ({ onClose }) => {
             {onClose && (
               <button
                 onClick={onClose}
-                className="text-xs px-2.5 py-1 rounded-lg bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-700/40"
+                className="text-xs px-2.5 py-1 rounded-lg bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-700/40 transition-all"
               >
-                Back
+                Back to Live
               </button>
             )}
           </div>
@@ -534,14 +335,304 @@ const DocsHub = ({ onClose }) => {
 
         <div className="pt-4 border-t border-slate-800/60 text-[11px] text-slate-500 space-y-1">
           <p><strong className="text-slate-400">IncidentIQ Platform</strong> v1.0.0</p>
-          <p>Lead Architect: <span className="text-slate-300 font-semibold">Saswat Kumar Patro</span></p>
+          <p>Architect: <span className="text-slate-300 font-semibold">Saswat Kumar Patro</span></p>
           <p>VLink Company AI Hackathon</p>
         </div>
       </aside>
 
       {/* Main Content Area */}
       <main className="flex-1 bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 backdrop-blur-xl shadow-2xl overflow-y-auto">
-        {/* TAB 1: EXACT ARCHITECTURE DIAGRAM (MATCHING USER IMAGE) */}
+
+        {/* TAB 1: 6 PRACTICAL END-TO-END SCENARIOS */}
+        {activeTab === 'scenarios_e2e' && (
+          <div className="space-y-6 animate-fade-in">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800/80 pb-4">
+              <div>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-2">
+                  <Zap size={13} /> Production Run Playbooks
+                </div>
+                <h2 className="text-2xl font-black text-slate-100">6 Practical Outage Scenarios (End-to-End)</h2>
+                <p className="text-xs text-slate-400 mt-1">
+                  Complete breakdown of how each outage triggers, how root cause confidence is formed, and how autonomous remediation resolves the incident.
+                </p>
+              </div>
+
+              {/* Scenario Selector Pills */}
+              <div className="flex flex-wrap gap-1.5">
+                {practicalScenarios.map((sc, idx) => (
+                  <button
+                    key={sc.id}
+                    onClick={() => setSelectedScenarioIndex(idx)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                      selectedScenarioIndex === idx
+                        ? 'bg-sky-500 text-white shadow-md shadow-sky-500/20'
+                        : 'bg-slate-800/80 text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    Scenario {idx + 1}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Active Scenario Card */}
+            {(() => {
+              const sc = practicalScenarios[selectedScenarioIndex];
+              return (
+                <div className="space-y-6">
+                  {/* Scenario Header Info */}
+                  <div className="p-6 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-4">
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+                      <div>
+                        <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-md font-mono ${
+                          sc.severity.includes('P1') ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                        }`}>
+                          {sc.severity}
+                        </span>
+                        <h3 className="text-xl font-bold text-white mt-1.5">{sc.title}</h3>
+                        <p className="text-xs font-mono text-slate-400">Service: {sc.service}</p>
+                      </div>
+                      <div className="flex gap-4 text-right">
+                        <div>
+                          <span className="text-[10px] uppercase font-mono text-slate-500 block">SLA Threshold</span>
+                          <span className="text-sm font-bold text-slate-300">{sc.slaLimit}</span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] uppercase font-mono text-slate-500 block">IncidentIQ MTTR</span>
+                          <span className="text-sm font-black text-emerald-400">{sc.mttrActual}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                      <div className="space-y-2">
+                        <span className="font-bold text-sky-400 uppercase tracking-wider block">Trigger Mechanism:</span>
+                        <p className="text-slate-300 bg-slate-900/90 p-3 rounded-xl border border-slate-800/80 leading-relaxed">
+                          {sc.startTrigger}
+                        </p>
+                      </div>
+                      <div className="space-y-2">
+                        <span className="font-bold text-indigo-400 uppercase tracking-wider block">Customer Blast Radius:</span>
+                        <p className="text-slate-300 bg-slate-900/90 p-3 rounded-xl border border-slate-800/80 leading-relaxed">
+                          {sc.blastRadius}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Confidence Scoring Box */}
+                    <div className="p-4 rounded-xl bg-indigo-950/20 border border-indigo-500/30 space-y-2 text-xs">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-indigo-300 flex items-center gap-1.5">
+                          <Percent size={14} className="text-indigo-400" />
+                          RCA Confidence Rating: <strong className="text-emerald-400 text-sm">{sc.confidence}</strong>
+                        </span>
+                        <span className="text-[10px] font-mono text-slate-400">Runbook: {sc.runbookUsed}</span>
+                      </div>
+                      <p className="text-[11px] text-slate-400 font-mono leading-relaxed">
+                        <strong>Confidence Formula:</strong> {sc.confidenceBreakdown}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Step-by-Step Execution Waterfall */}
+                  <div className="space-y-3">
+                    <h4 className="text-xs font-black uppercase tracking-widest text-slate-400">
+                      Step-by-Step Incident Lifecycle (Trigger ➔ RCA ➔ Runbook ➔ Comms ➔ Post-Mortem)
+                    </h4>
+                    <div className="space-y-2.5">
+                      {sc.steps.map((st, i) => (
+                        <div key={i} className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800/80 flex items-start gap-4">
+                          <div className="w-16 flex-shrink-0 font-mono text-[11px] text-sky-400 font-bold">
+                            {st.time}
+                          </div>
+                          <div className="flex-1 space-y-1">
+                            <span className="text-xs font-bold text-slate-200 block">{st.title}</span>
+                            <p className="text-[11px] text-slate-400 leading-relaxed">{st.detail}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+        )}
+
+        {/* TAB 2: TELEMETRY, TRIGGERS & CONFIDENCE CALCULATION ENGINE */}
+        {activeTab === 'telemetry_confidence' && (
+          <div className="space-y-6 text-xs text-slate-300 leading-relaxed animate-fade-in">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-400 text-xs font-bold uppercase tracking-wider mb-2">
+                <TrendingUp size={13} /> Deep Diagnostic Mechanics
+              </div>
+              <h2 className="text-2xl font-black text-slate-100">Telemetry Ingestion, Triggers &amp; Confidence Engine</h2>
+              <p className="text-slate-400 mt-1">
+                How IncidentIQ ingests logs, what triggers the autonomous pipeline, and the mathematical formula behind the AI's confidence scores.
+              </p>
+            </div>
+
+            {/* Section 1: Where the AI gets the logs from & what triggers it */}
+            <div className="p-6 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-4">
+              <h3 className="text-sm font-bold text-sky-400 uppercase tracking-wider flex items-center gap-2">
+                <Radio size={16} /> 1. Where Does the AI Get the Logs &amp; Telemetry?
+              </h3>
+              <p>
+                IncidentIQ receives and aggregates observability data from multiple standardized ingestion channels:
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1">
+                <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800 space-y-1.5">
+                  <strong className="text-slate-200 block">1. Alert Ingestion Webhook</strong>
+                  <p className="text-slate-400 text-[11px]">
+                    Triggered by <code>POST /api/incident/trigger</code>. Simulates incoming webhooks from Prometheus Alertmanager, Datadog Webhook integrations, AWS CloudWatch alarms, or PagerDuty alerts.
+                  </p>
+                </div>
+                <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800 space-y-1.5">
+                  <strong className="text-slate-200 block">2. APM Telemetry Query Tool</strong>
+                  <p className="text-slate-400 text-[11px]">
+                    The RCA Agent invokes <code>fetch_telemetry()</code> via <code>backend/mocks/mock_newrelic.py</code>, polling golden signals: throughput (RPM), P99 latency, error rates, DB pool usage, and container CPU/memory metrics.
+                  </p>
+                </div>
+                <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800 space-y-1.5">
+                  <strong className="text-slate-200 block">3. Deployment Commit Logs</strong>
+                  <p className="text-slate-400 text-[11px]">
+                    The agent scans recent deployment metadata (e.g. <code>PROJ-4821</code>, <code>PROJ-4912</code>, <code>PROJ-4990</code>) deployed within the last 30 minutes to correlate configuration diffs with error spikes.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Section 2: Mathematical Confidence Calculation Formula */}
+            <div className="p-6 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-4">
+              <h3 className="text-sm font-bold text-indigo-400 uppercase tracking-wider flex items-center gap-2">
+                <Percent size={16} /> 2. How Does the AI Calculate Its Confidence Score?
+              </h3>
+              <p>
+                The RCA Agent does not guess. It computes a <strong>Weighted Multi-Factor Heuristic Score</strong> across four distinct diagnostic vectors:
+              </p>
+
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 font-mono text-[11px] text-slate-300 space-y-2">
+                <p className="text-purple-400 font-bold">Confidence Score Formula: C = W_deploy + W_signature + W_saturation + W_exclusion</p>
+                <div className="space-y-1 text-slate-400">
+                  <p>• <strong>W_deploy (35% weight):</strong> Temporal correlation. If a deployment occurred within 15 minutes prior to the latency/error spike, +35% confidence is credited.</p>
+                  <p>• <strong>W_signature (30% weight):</strong> Error signature string matching. If application logs contain exact known exception strings (e.g. <code>PSQLException: FATAL remaining connection slots</code> or <code>NullPointerException at CouponDeserializer.java:42</code>), +30% confidence is credited.</p>
+                  <p>• <strong>W_saturation (20% weight):</strong> Metric threshold breach. If telemetry shows a resource (DB connection pool, Redis memory, Kafka consumer lag) saturated above 90% capacity, +20% confidence is credited.</p>
+                  <p>• <strong>W_exclusion (15% weight):</strong> Hypothesis elimination. The agent rules out alternative explanations (e.g., verifying that upstream Visa gateway network latency is nominal, or checking that local host CPU is under 40%), adding +15% confidence.</p>
+                </div>
+                <div className="pt-2 border-t border-slate-800 text-emerald-400 font-bold">
+                  Total Combined Confidence = 35% + 30% + 20% + 13% = 98% Confidence
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 3: KNOWLEDGE BASE, FLAT FILES & CHROMADB VECTOR STORE */}
+        {activeTab === 'knowledge_base_files' && (
+          <div className="space-y-6 text-xs text-slate-300 leading-relaxed animate-fade-in">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800/80 pb-4">
+              <div>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs font-bold uppercase tracking-wider mb-2">
+                  <Database size={13} /> Local Vector &amp; Flat File Knowledge
+                </div>
+                <h2 className="text-2xl font-black text-slate-100">Knowledge Base &amp; Flat File Storage</h2>
+                <p className="text-slate-400 mt-1">
+                  IncidentIQ utilizes local flat files and ChromaDB vector store so that it has instant, deterministic knowledge of company runbooks.
+                </p>
+              </div>
+
+              {/* Runbook Selector Buttons */}
+              <div className="flex flex-wrap gap-1.5">
+                {Object.keys(runbooksData).map((rbKey) => (
+                  <button
+                    key={rbKey}
+                    onClick={() => setSelectedRunbook(rbKey)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                      selectedRunbook === rbKey
+                        ? 'bg-purple-600 text-white shadow-md shadow-purple-500/20'
+                        : 'bg-slate-800/80 text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    {rbKey}.md
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Runbook Viewer */}
+            {(() => {
+              const rb = runbooksData[selectedRunbook];
+              return (
+                <div className="p-6 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-4">
+                  <div className="border-b border-slate-800 pb-3 flex items-center justify-between">
+                    <div>
+                      <span className="text-[10px] font-mono text-purple-400 uppercase tracking-wider block">Flat File Path</span>
+                      <h3 className="text-base font-bold text-white font-mono">{rb.filename}</h3>
+                    </div>
+                    <span className="text-[10px] px-2 py-0.5 rounded bg-purple-500/10 text-purple-300 border border-purple-500/20 font-mono">
+                      ChromaDB Indexed
+                    </span>
+                  </div>
+
+                  <div className="space-y-2">
+                    <h4 className="text-xs font-bold text-slate-200 uppercase tracking-wider">Title:</h4>
+                    <p className="text-slate-300 font-semibold">{rb.title}</p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <h4 className="text-xs font-bold text-rose-400 uppercase tracking-wider">Recognized Symptoms:</h4>
+                    <ul className="list-disc list-inside space-y-1 text-slate-400 text-[11px]">
+                      {rb.symptoms.map((s, i) => (
+                        <li key={i}>{s}</li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="space-y-2">
+                    <h4 className="text-xs font-bold text-indigo-400 uppercase tracking-wider">Identified Root Causes:</h4>
+                    <ul className="list-disc list-inside space-y-1 text-slate-400 text-[11px]">
+                      {rb.rootCauses.map((rc, i) => (
+                        <li key={i}>{rc}</li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="space-y-2">
+                    <h4 className="text-xs font-bold text-emerald-400 uppercase tracking-wider">Standard Remediation Steps (Adapted by AI):</h4>
+                    <div className="space-y-1.5 bg-slate-900 p-3.5 rounded-xl border border-slate-800 font-mono text-[11px] text-slate-300">
+                      {rb.remediationSteps.map((step, i) => (
+                        <p key={i}>{step}</p>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Offline Cache & SQLite Storage Details */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
+                <span className="text-xs font-bold text-amber-400 uppercase tracking-wider block">
+                  Deterministic Flat File Cache: backend/gemini_cache.json
+                </span>
+                <p className="text-[11px] text-slate-400 leading-relaxed">
+                  Contains pre-validated SRE reasoning patterns for the predefined hackathon scenarios. If live Google Gemini API rate limits are exceeded (15 RPM free tier) or local networks drop, the engine serves deterministic resolutions with 100% reliability.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
+                <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider block">
+                  SQLite State Database: backend/incidentiq.db
+                </span>
+                <p className="text-[11px] text-slate-400 leading-relaxed">
+                  Stores live incident lifecycles, active WebSocket connection subscriber IDs, Jira ticket records, and historical incident baselines (seeded via <code>backend/database/seed_data.py</code>).
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 4: ARCHITECTURE DIAGRAM */}
         {activeTab === 'architecture_diagram' && (
           <div className="space-y-6 animate-fade-in">
             <div className="flex items-center justify-between">
@@ -680,7 +771,7 @@ const DocsHub = ({ onClose }) => {
           </div>
         )}
 
-        {/* TAB 2: PRESENTATION (PITCH DECK) */}
+        {/* TAB 5: PRESENTATION (PITCH DECK) */}
         {activeTab === 'presentation' && (
           <div className="space-y-6 animate-fade-in">
             <div className="flex items-center justify-between">
@@ -754,7 +845,7 @@ const DocsHub = ({ onClose }) => {
           </div>
         )}
 
-        {/* TAB 3: DETAILED WORKFLOW */}
+        {/* TAB 6: DETAILED WORKFLOW */}
         {activeTab === 'detailed_workflow' && (
           <div className="space-y-6 animate-fade-in">
             <div>
@@ -845,7 +936,7 @@ const DocsHub = ({ onClose }) => {
           </div>
         )}
 
-        {/* TAB 4: DETAILED PROJECT REPORT */}
+        {/* TAB 7: DETAILED PROJECT REPORT */}
         {activeTab === 'project_report' && (
           <div className="space-y-6 text-xs text-slate-300 leading-relaxed animate-fade-in">
             <div>
@@ -905,7 +996,7 @@ const DocsHub = ({ onClose }) => {
           </div>
         )}
 
-        {/* TAB 5: SYSTEM ARCHITECTURE */}
+        {/* TAB 8: SYSTEM ARCHITECTURE */}
         {activeTab === 'system_architecture' && (
           <div className="space-y-6 text-xs text-slate-300 leading-relaxed animate-fade-in">
             <div>
@@ -958,7 +1049,7 @@ const DocsHub = ({ onClose }) => {
           </div>
         )}
 
-        {/* TAB 6: TECH STACK & SPECS */}
+        {/* TAB 9: TECH STACK & SPECS */}
         {activeTab === 'tech_stack' && (
           <div className="space-y-6 text-xs text-slate-300 animate-fade-in">
             <div>
@@ -1031,7 +1122,7 @@ const DocsHub = ({ onClose }) => {
           </div>
         )}
 
-        {/* TAB 7: CODEBASE & FILE STRUCTURE */}
+        {/* TAB 10: CODEBASE & FILE STRUCTURE */}
         {activeTab === 'file_structure' && (
           <div className="space-y-6 text-xs text-slate-300 animate-fade-in">
             <div>
@@ -1069,7 +1160,7 @@ const DocsHub = ({ onClose }) => {
               <p>│   │   └── seed_data.py         # Historical outages &amp; baseline metric records</p>
               <p>│   ├── rag/                     # Semantic runbook retrieval engine</p>
               <p>│   │   ├── knowledge_base.py    # ChromaDB ingestion, querying, and similarity search</p>
-              <p>│   │   └── runbooks/            # Markdown runbooks for DB, Kafka, API outages</p>
+              <p>│   │   └── runbooks/            # Flat markdown runbooks (database, kafka, api, payment)</p>
               <p>│   └── mocks/                   # External service simulators</p>
               <p>│       ├── mock_alerts.py       # P1/P2 outage payload scenarios</p>
               <p>│       ├── mock_newrelic.py     # Synthetic metric spike &amp; log generator</p>
@@ -1096,7 +1187,7 @@ const DocsHub = ({ onClose }) => {
           </div>
         )}
 
-        {/* TAB 8: AGENT DEEP-DIVE (ALL 6 AGENTS) */}
+        {/* TAB 11: AGENT DEEP-DIVE (ALL 6 AGENTS) */}
         {activeTab === 'agent_deepdive' && (
           <div className="space-y-6 text-xs text-slate-300 animate-fade-in">
             <div>
